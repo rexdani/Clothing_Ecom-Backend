@@ -76,7 +76,7 @@ public class SecurityConfig {
         // IMPORTANT: only allow your frontend domains
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5000",
-                "http://localhost:3000",
+                "http://localhost:4000",
                 "https://xomo.netlify.app",
                 "https://xomo-eight.vercel.app"
         ));
