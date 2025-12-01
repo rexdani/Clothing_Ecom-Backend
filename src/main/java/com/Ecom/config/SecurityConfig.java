@@ -77,7 +77,8 @@ public class SecurityConfig {
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5000",
                 "http://localhost:3000",
-                "https://xomo.netlify.app"
+                "https://xomo.netlify.app",
+                "https://xomo-eight.vercel.app"
         ));
 
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
