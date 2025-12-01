@@ -66,7 +66,6 @@ public class Product {
         private String description;
         private Double price;
         private Integer stock;
-        private String imageUrl;
         private byte[] image;
         private Category category;
 
@@ -88,10 +87,6 @@ public class Product {
 
         public ProductBuilder stock(Integer stock) {
             this.stock = stock; return this;
-        }
-
-        public ProductBuilder imageUrl(String imageUrl) {
-            this.imageUrl = imageUrl; return this;
         }
 
         public ProductBuilder image(byte[] image) {

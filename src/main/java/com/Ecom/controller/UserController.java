@@ -75,5 +75,14 @@ public class UserController {
 			return ResponseEntity.status(500).body("Error fetching users: " + e.getMessage());
 		}
 	}
+//	@GetMapping("/address")
+//	public ResponseEntity<?> getAllAddresses() {
+//		try {
+//			List<String> addresses = userRepository.findAllAddresses();
+//			return ResponseEntity.ok(addresses);
+//		} catch (Exception e) {
+//			return ResponseEntity.status(500).body("Error fetching addresses: " + e.getMessage());
+//		}
+//	}
 
 }

@@ -45,7 +45,6 @@ public class ProductService {
                 .stock(request.getStock())
                 .category(category)
                 .image(imageBytes) // <---- NEW: store longblob
-                .imageUrl("/products/image/temp") // optional (can be dynamic later)
                 .build();
 
         return productRepository.save(product);

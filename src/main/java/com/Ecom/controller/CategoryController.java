@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Ecom.dto.CategoryDTO;
+import com.Ecom.dto.ProductDTO;
 import com.Ecom.model.Category;
 import com.Ecom.model.Product;
 import com.Ecom.service.CategoryService;
@@ -58,8 +59,14 @@ public class CategoryController {
 
     // Get all products for a given category ID
     @GetMapping("/{id}/products")
-    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.getProductsByCategory(id));
+    public ResponseEntity<List<ProductDTO>> getProductsByCategory(@PathVariable Long id) {
+        List<Product> products = productService.getProductsByCategory(id);
+
+        List<ProductDTO> dtoList = products.stream()
+                .map(this::convertProductToDTO)
+                .toList();
+
+        return ResponseEntity.ok(dtoList);
     }
 
     // Update category
@@ -94,4 +101,21 @@ public class CategoryController {
 
         return dto;
     }
+    private ProductDTO convertProductToDTO(Product product) {
+        ProductDTO dto = new ProductDTO();
+        dto.setId(product.getId());
+        dto.setName(product.getName());
+        dto.setDescription(product.getDescription());
+        dto.setPrice(product.getPrice());
+        dto.setStock(product.getStock());
+        dto.setCategoryId(product.getCategory().getId());
+
+        if (product.getImage() != null) {
+            String base64 = Base64.getEncoder().encodeToString(product.getImage());
+            dto.setImageBase64(base64);
+        }
+
+        return dto;
+    }
+
 }

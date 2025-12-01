@@ -1,15 +1,16 @@
 package com.Ecom.controller;
 
-import com.Ecom.dto.PaymentRequest;
-import com.Ecom.model.Payment;
-import com.Ecom.service.PaymentService;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.Ecom.dto.PaymentRequest;
+import com.Ecom.model.Payment;
+import com.Ecom.service.PaymentService;
 
 @RestController
 @RequestMapping("/payments")
@@ -18,6 +19,7 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
+
 
     // ==================== PROCESS PAYMENT ====================
     @PostMapping("/process")
@@ -36,6 +38,7 @@ public class PaymentController {
         return ResponseEntity.ok(payment);
     }
 
+
     // ==================== GET PAYMENT BY ORDER ====================
     @GetMapping("/order/{orderId}")
     public ResponseEntity<Payment> getPaymentForOrder(
@@ -48,6 +51,7 @@ public class PaymentController {
         return ResponseEntity.ok(payment);
     }
 
+
     // ==================== GET ALL PAYMENTS FOR USER ====================
     @GetMapping
     public ResponseEntity<List<Payment>> getUserPayments(Authentication authentication) {
@@ -55,5 +59,22 @@ public class PaymentController {
         List<Payment> payments = paymentService.getPaymentsByUser(email);
 
         return ResponseEntity.ok(payments);
+    }
+
+
+    // ==================== CREATE RAZORPAY ORDER ====================
+    @PostMapping("/create-order")
+    public ResponseEntity<?> createRazorpayOrder(@RequestBody Map<String, Object> data) {
+        try {
+            double amount = Double.parseDouble(data.get("amount").toString());
+
+            // IMPORTANT: use fully-qualified Razorpay Order here
+            com.razorpay.Order razorpayOrder = paymentService.createOrder(amount);
+
+            return ResponseEntity.ok(razorpayOrder.toJson().toString());
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
 }

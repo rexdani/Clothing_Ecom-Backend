@@ -1,6 +1,7 @@
 package com.Ecom.controller;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.Ecom.dto.AddProductRequest;
+import com.Ecom.dto.ProductDTO;
 import com.Ecom.model.Product;
 import com.Ecom.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,45 +35,49 @@ public class ProductController {
 
     // ==================== ADD PRODUCT ====================
     @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Product> addProduct(
+    public ResponseEntity<ProductDTO> addProduct(
             @RequestPart("data") String rawData,
             @RequestPart(value = "image", required = false) MultipartFile imageFile
     ) throws IOException {
 
-        // Convert JSON String → AddProductRequest
         ObjectMapper mapper = new ObjectMapper();
         AddProductRequest request = mapper.readValue(rawData, AddProductRequest.class);
 
         Product savedProduct = productService.addProduct(request, imageFile);
-        return ResponseEntity.ok(savedProduct);
+        return ResponseEntity.ok(convertProductToDTO(savedProduct));
     }
 
     // ==================== UPDATE PRODUCT ====================
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Product> updateProduct(
+    public ResponseEntity<ProductDTO> updateProduct(
             @PathVariable Long id,
             @RequestPart("data") String rawData,
             @RequestPart(value = "image", required = false) MultipartFile imageFile
     ) throws IOException {
 
-        // Convert JSON string into the Java object
         ObjectMapper mapper = new ObjectMapper();
         AddProductRequest request = mapper.readValue(rawData, AddProductRequest.class);
 
         Product updatedProduct = productService.updateProduct(id, request, imageFile);
-        return ResponseEntity.ok(updatedProduct);
+        return ResponseEntity.ok(convertProductToDTO(updatedProduct));
     }
 
     // ==================== GET ALL PRODUCTS ====================
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+    public ResponseEntity<List<ProductDTO>> getAllProducts() {
+        List<ProductDTO> dtoList = productService.getAllProducts()
+                .stream()
+                .map(this::convertProductToDTO)
+                .toList();
+
+        return ResponseEntity.ok(dtoList);
     }
 
     // ==================== GET ONE PRODUCT ====================
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.getProductById(id));
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
+        Product product = productService.getProductById(id);
+        return ResponseEntity.ok(convertProductToDTO(product));
     }
 
     // ==================== DELETE ====================
@@ -83,36 +89,65 @@ public class ProductController {
 
     // ==================== FILTER BY CATEGORY ====================
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable Long categoryId) {
-        return ResponseEntity.ok(productService.getProductsByCategory(categoryId));
+    public ResponseEntity<List<ProductDTO>> getProductsByCategory(@PathVariable Long categoryId) {
+        List<ProductDTO> dtoList = productService.getProductsByCategory(categoryId)
+                .stream()
+                .map(this::convertProductToDTO)
+                .toList();
+
+        return ResponseEntity.ok(dtoList);
     }
 
     // ==================== SEARCH ====================
     @GetMapping("/search")
-    public ResponseEntity<List<Product>> searchProducts(@RequestParam String keyword) {
-        return ResponseEntity.ok(productService.searchProducts(keyword));
+    public ResponseEntity<List<ProductDTO>> searchProducts(@RequestParam String keyword) {
+        List<ProductDTO> dtoList = productService.searchProducts(keyword)
+                .stream()
+                .map(this::convertProductToDTO)
+                .toList();
+
+        return ResponseEntity.ok(dtoList);
     }
 
     // ==================== GET IMAGE ENDPOINT ====================
     @GetMapping("/image/{id}")
     public ResponseEntity<byte[]> getProductImage(@PathVariable Long id) {
         byte[] imageBytes = productService.getProductImage(id);
+
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(imageBytes);
     }
-    
 
-    // GET similar products
+    // ==================== SIMILAR PRODUCTS ====================
     @GetMapping("/{id}/similar")
-    public List<Product> getSimilarProducts(@PathVariable Long id) {
-        return productService.getSimilarProducts(id);
+    public ResponseEntity<List<ProductDTO>> getSimilarProducts(@PathVariable Long id) {
+
+        List<ProductDTO> dtoList = productService.getSimilarProducts(id)
+                .stream()
+                .map(this::convertProductToDTO)
+                .toList();
+
+        return ResponseEntity.ok(dtoList);
     }
 
-    // GET product suggestions
-//    @GetMapping("/{id}/suggestions")
-//    public List<Product> getSuggestions(@PathVariable Long id) {
-//        return productService.getSuggestedProducts(id);
-//    }
+    // ==================== CONVERTER ====================
+    private ProductDTO convertProductToDTO(Product product) {
+        ProductDTO dto = new ProductDTO();
+
+        dto.setId(product.getId());
+        dto.setName(product.getName());
+        dto.setDescription(product.getDescription());
+        dto.setPrice(product.getPrice());
+        dto.setStock(product.getStock());
+        dto.setCategoryId(product.getCategory().getId());
+
+        if (product.getImage() != null) {
+            dto.setImageBase64(Base64.getEncoder().encodeToString(product.getImage()));
+        }
+
+        return dto;
+    }
+
 }
