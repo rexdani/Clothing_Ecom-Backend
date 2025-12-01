@@ -73,7 +73,7 @@ public class SecurityConfig {
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5000",
                 "http://localhost:3000",
-                "https://your-frontend.onrender.com"
+                "https://xomo.netlify.app"
         ));
 
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
