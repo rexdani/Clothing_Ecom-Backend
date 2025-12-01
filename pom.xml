@@ -10,7 +10,7 @@
         <version>3.5.7</version>
     </parent>
 
-    <groupId>com.ecom</groupId>
+    <groupId>com.Ecom</groupId>
     <artifactId>ClothingEcommerce</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ClothingEcommerce</name>
