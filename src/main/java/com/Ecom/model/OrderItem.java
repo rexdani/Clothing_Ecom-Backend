@@ -1,6 +1,6 @@
 package com.Ecom.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,6 +29,7 @@ public class OrderItem {
     // Each OrderItem belongs to an Order
     @ManyToOne
     @JoinColumn(name = "order_id")
+    @JsonBackReference
     private Order order;
 
     // Product snapshot at time of ordering

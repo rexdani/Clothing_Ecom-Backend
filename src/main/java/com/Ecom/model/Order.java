@@ -4,23 +4,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "orders")
@@ -37,25 +25,27 @@ public class Order {
     // Many orders belong to one user
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore       // prevent infinite loop: user → orders → user
     private User user;
 
     // Shipping address
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "address_id")
-    @JsonManagedReference("user-address") 
     private Address address;
 
     // Order items list
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<OrderItem> items = new ArrayList<>();
 
     private Double totalAmount;
 
-    private String orderStatus;  // PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED
+    private String orderStatus;  
+    // PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED
 
     private LocalDateTime orderDate;
 
-    private LocalDateTime deliveryDate; // optional
+    private LocalDateTime deliveryDate;
 
 	public Long getId() {
 		return id;

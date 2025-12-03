@@ -87,6 +87,7 @@ public class AuthController {
         address.setState(request.getAddress().getState());
         address.setCountry(request.getAddress().getCountry());
         address.setPostalCode(request.getAddress().getPostalCode());
+        address.setUser(user);
 
         user.setAddress(address);
 
