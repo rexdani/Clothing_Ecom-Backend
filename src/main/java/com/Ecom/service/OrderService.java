@@ -48,6 +48,8 @@ public class OrderService {
         order.setAddress(user.getAddress()); // or fetch by request.getAddressId()
         order.setOrderStatus("PENDING");
         order.setOrderDate(LocalDateTime.now());
+        order.setDeliveryDate(LocalDateTime.now().plusDays(7)); // Estimated delivery date
+        order.setPayment(request.getPaymentMethod()); // Will be set after payment is processed
 
         List<OrderItem> orderItems = new ArrayList<>();
         double totalAmount = 0;

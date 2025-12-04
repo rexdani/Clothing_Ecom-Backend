@@ -73,6 +73,17 @@ public class ProductController {
         return ResponseEntity.ok(dtoList);
     }
 
+    // ==================== NEW ARRIVALS ====================
+    @GetMapping("/new-arrivals")
+    public ResponseEntity<List<ProductDTO>> getNewArrivals(@RequestParam(defaultValue = "10") int limit) {
+        List<ProductDTO> dtoList = productService.getNewArrivals(limit)
+                .stream()
+                .map(this::convertProductToDTO)
+                .toList();
+
+        return ResponseEntity.ok(dtoList);
+    }
+
     // ==================== GET ONE PRODUCT ====================
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {

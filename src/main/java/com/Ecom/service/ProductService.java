@@ -10,6 +10,8 @@ import com.Ecom.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.io.IOException;
 import java.util.List;
@@ -78,6 +80,12 @@ public class ProductService {
     // =============== GET ALL PRODUCTS ===============
     public List<Product> getAllProducts() {
         return productRepository.findAll();
+    }
+
+    // =============== GET NEW ARRIVALS ===============
+    public List<Product> getNewArrivals(int limit) {
+        if (limit <= 0) limit = 10;
+        return productRepository.findAll(PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "id"))).getContent();
     }
 
     // =============== GET PRODUCT BY ID ===============
