@@ -77,6 +77,7 @@ public class SecurityConfig {
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5000",
                 "http://localhost:4000",
+                "http://localhost:4001",
                 "https://xomo.netlify.app",
                 "https://xomo-eight.vercel.app"
         ));
