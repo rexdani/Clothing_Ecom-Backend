@@ -1,19 +1,25 @@
 package com.Ecom.service;
 
-import com.Ecom.dto.PlaceOrderRequest;
-import com.Ecom.exception.ResourceNotFoundException;
-import com.Ecom.model.*;
-import com.Ecom.repository.CartRepository;
-import com.Ecom.repository.OrderRepository;
-import com.Ecom.repository.PaymentRepository;
-import com.Ecom.repository.UserRepository;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import com.Ecom.dto.PlaceOrderRequest;
+import com.Ecom.exception.ResourceNotFoundException;
+import com.Ecom.model.Cart;
+import com.Ecom.model.CartItem;
+import com.Ecom.model.Order;
+import com.Ecom.model.OrderItem;
+import com.Ecom.model.Payment;
+import com.Ecom.model.User;
+import com.Ecom.repository.CartRepository;
+import com.Ecom.repository.OrderRepository;
+import com.Ecom.repository.PaymentRepository;
+import com.Ecom.repository.UserRepository;
 
 @Service
 public class OrderService {
@@ -112,4 +118,69 @@ public class OrderService {
 
         return order;
     }
+ // Get all orders (admin only)
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    // Get order by ID (admin - no user check)
+    public Order getOrderById(Long orderId) {
+        return orderRepository.findById(orderId)
+            .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+    }
+
+    public Order updateOrderStatus(Long id, String newStatus) {
+
+        // Find order
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        String currentStatus = order.getOrderStatus();
+
+        // Define allowed transitions
+        List<String> allowedStatuses = List.of("PENDING", "CONFIRMED", "SHIPPED", "DELIVERED", "CANCELLED");
+
+        if (!allowedStatuses.contains(newStatus)) {
+            throw new IllegalArgumentException("Invalid order status: " + newStatus);
+        }
+
+        // Business rules
+        if (currentStatus.equals("DELIVERED")) {
+            throw new IllegalArgumentException("Order is already delivered and cannot be changed");
+        }
+
+        if (currentStatus.equals("CANCELLED")) {
+            throw new IllegalArgumentException("Order is cancelled and cannot be updated");
+        }
+
+        // Update status
+        order.setOrderStatus(newStatus);
+
+        // Update payment if needed
+        Payment payment = paymentRepository.findByOrder(order).orElse(null);
+
+        if (payment != null) {
+            switch (newStatus) {
+                case "CONFIRMED":
+                    payment.setPaymentStatus("PROCESSING");
+                    break;
+
+                case "SHIPPED":
+                    payment.setPaymentStatus("PROCESSING");
+                    break;
+
+                case "DELIVERED":
+                    payment.setPaymentStatus("PAID");
+                    break;
+
+                case "CANCELLED":
+                    payment.setPaymentStatus("REFUNDED");
+                    break;
+            }
+            paymentRepository.save(payment);
+        }
+
+        return orderRepository.save(order);
+    }
+
 }

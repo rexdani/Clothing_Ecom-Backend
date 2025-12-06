@@ -10,4 +10,5 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     // Find payment by order
     Optional<Payment> findByOrder(Order order);
+    
 }

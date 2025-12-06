@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface HomeAdRepository extends JpaRepository<HomeAd, Long> {
     List<HomeAd> findByActiveTrue();
+    
 }
