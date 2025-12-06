@@ -79,7 +79,8 @@ public class SecurityConfig {
                 "http://localhost:4000",
                 "http://localhost:4001",
                 "https://xomo.netlify.app",
-                "https://xomo-eight.vercel.app"
+                "https://xomo-eight.vercel.app",
+                "https://xomo-admin.vercel.app"
         ));
 
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
