@@ -2,9 +2,9 @@ package com.Ecom.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.security.core.Authentication; // ✔ Correct import
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication; // ✔ Correct import
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -80,4 +80,11 @@ public class OrderController {
         Order order = orderService.updateOrderStatus(id, newStatus);
         return ResponseEntity.ok(order);
     }
+    @GetMapping("/admin/user/{userId}")
+    public ResponseEntity<List<Order>> getOrdersByUserIdAdmin(
+			@PathVariable Long userId
+	) {
+		List<Order> orders = orderService.getOrdersByUserId(userId);
+		return ResponseEntity.ok(orders);
+	}
 }
