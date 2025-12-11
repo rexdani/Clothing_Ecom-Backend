@@ -68,6 +68,10 @@ public class CartController {
     @GetMapping("/count/{userId}")
     public ResponseEntity<Integer> getCartCount(@PathVariable User userId) {
         int count = cartService.getCartCount(userId);
+        if (count <= 0) {
+        	return ResponseEntity.ok(0);
+		}
+        
         return ResponseEntity.ok(count);
     }
     
@@ -86,5 +90,6 @@ public class CartController {
         Cart cart = cartService.updateCartItemQuantity(cartItemId, quantity, email);
         return ResponseEntity.ok(cart);
     }
+   
     
 }
