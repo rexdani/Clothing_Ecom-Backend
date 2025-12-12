@@ -19,8 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.Ecom.dto.CategoryDTO;
+import com.Ecom.dto.ProductDTO;
 import com.Ecom.model.Category;
+import com.Ecom.model.Product;
 import com.Ecom.service.CategoryService;
+import com.Ecom.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
@@ -30,6 +33,8 @@ public class CategoryController {
 
 	 @Autowired
 	    private CategoryService categoryService;
+	 @Autowired
+	    private ProductService productService;
 
 
 	    // ===================== CREATE CATEGORY =====================
@@ -106,4 +111,31 @@ public class CategoryController {
 
 	        return dto;
 	    }
+	    @GetMapping("/{id}/products")
+	    public ResponseEntity<List<ProductDTO>> getProductsByCategory(@PathVariable Long id) {
+	        List<Product> products = productService.getProductsByCategory(id);
+
+	        List<ProductDTO> dtoList = products.stream()
+	                .map(this::convertProductToDTO)
+	                .toList();
+
+	        return ResponseEntity.ok(dtoList);
+	    }
+	    private ProductDTO convertProductToDTO(Product product) {
+	        ProductDTO dto = new ProductDTO();
+	        dto.setId(product.getId());
+	        dto.setName(product.getName());
+	        dto.setDescription(product.getDescription());
+	        dto.setPrice(product.getPrice());
+	        dto.setStock(product.getStock());
+	        dto.setCategoryId(product.getCategory().getId());
+
+	        if (product.getImage() != null) {
+	            String base64 = Base64.getEncoder().encodeToString(product.getImage());
+	            dto.setImageBase64(base64);
+	        }
+
+	        return dto;
+	    }
+
 }

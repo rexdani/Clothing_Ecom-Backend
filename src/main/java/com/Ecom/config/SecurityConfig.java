@@ -47,10 +47,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/products/**").permitAll()
 
                         // Public GET endpoints
-                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/category/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
 
                         // Admin API
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
