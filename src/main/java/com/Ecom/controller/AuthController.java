@@ -83,11 +83,11 @@ public class AuthController {
         Address address = new Address();
         address.setFullName(request.getAddress().getFullName());
         address.setPhoneNumber(request.getAddress().getPhoneNumber());
-        address.setStreet(request.getAddress().getStreet());
-        address.setCity(request.getAddress().getCity());
-        address.setState(request.getAddress().getState());
-        address.setCountry(request.getAddress().getCountry());
-        address.setPostalCode(request.getAddress().getPostalCode());
+        address.setStreet(null);
+        address.setCity(null);
+        address.setState(null);
+        address.setCountry(null);
+        address.setPostalCode(null);
         address.setUser(user);
 
         user.setAddress(address);
