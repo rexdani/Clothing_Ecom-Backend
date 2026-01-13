@@ -81,8 +81,8 @@ public class AuthController {
         user.setPhone(request.getPhone());
 
         Address address = new Address();
-        address.setFullName(request.getAddress().getFullName());
-        address.setPhoneNumber(request.getAddress().getPhoneNumber());
+        address.setFullName(request.getFullName());
+        address.setPhoneNumber(request.getPhone());
         address.setStreet(null);
         address.setCity(null);
         address.setState(null);
